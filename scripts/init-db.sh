@@ -26,6 +26,6 @@ cd /app/backend
 alembic upgrade head
 
 echo "Loading initial data..."
-python scripts/seed-data.js
+python scripts/seed-data.py
 
 echo "Database initialized successfully"
