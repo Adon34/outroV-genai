@@ -1,0 +1,58 @@
+{
+  "nutrition_basics": [
+    {
+      "content": "Macronutrientes são nutrientes que o corpo precisa em grandes quantidades: proteínas (4 kcal/g), carboidratos (4 kcal/g) e gorduras (9 kcal/g). Cada um tem funções específicas no organismo.",
+      "subcategory": "basics",
+      "source": "nutrition_textbook",
+      "tags": ["macros", "basics", "nutrition"]
+    },
+    {
+      "content": "Proteínas são essenciais para construção e reparação muscular. Fontes: carnes magras, ovos, laticínios, leguminosas. Recomendação: 1.6-2.2g por kg de peso para quem treina.",
+      "subcategory": "protein",
+      "source": "sports_nutrition",
+      "tags": ["protein", "muscle", "recovery"]
+    },
+    {
+      "content": "Carboidratos são a principal fonte de energia. Priorize carboidratos complexos: aveia, batata doce, arroz integral, quinoa. Evite açúcares refinados.",
+      "subcategory": "carbs",
+      "source": "sports_nutrition",
+      "tags": ["carbs", "energy", "complex_carbs"]
+    }
+  ],
+  "weight_loss": [
+    {
+      "content": "Para perda de peso, é necessário déficit calórico de 300-500 kcal por dia. Combine dieta com exercícios para melhores resultados e preservação muscular.",
+      "subcategory": "weight_loss",
+      "source": "clinical_nutrition",
+      "tags": ["weight_loss", "calorie_deficit"]
+    },
+    {
+      "content": "Estratégias para perda de peso sustentável: aumentar consumo de fibras, proteínas em todas refeições, beber água antes das refeições, dormir bem (7-9h).",
+      "subcategory": "weight_loss",
+      "source": "behavioral_nutrition",
+      "tags": ["weight_loss", "strategies", "sustainable"]
+    }
+  ],
+  "muscle_gain": [
+    {
+      "content": "Para ganho muscular, superávit calórico moderado de 300-500 kcal, com ênfase em proteínas de qualidade distribuídas em 4-6 refeições.",
+      "subcategory": "muscle_gain",
+      "source": "sports_nutrition",
+      "tags": ["muscle_gain", "calorie_surplus"]
+    }
+  ],
+  "special_diets": [
+    {
+      "content": "Dieta vegetariana: exclui carnes, mas pode incluir ovos e laticínios. Atenção à vitamina B12, ferro e proteínas completas.",
+      "subcategory": "vegetarian",
+      "source": "dietary_guidelines",
+      "tags": ["vegetarian", "plant_based"]
+    },
+    {
+      "content": "Dieta vegana: exclui todos produtos de origem animal. Suplementação de B12 essencial. Fontes de proteína: leguminosas, tofu, seitan, quinoa.",
+      "subcategory": "vegan",
+      "source": "dietary_guidelines",
+      "tags": ["vegan", "plant_based"]
+    }
+  ]
+}

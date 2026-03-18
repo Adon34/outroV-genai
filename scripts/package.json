@@ -1,0 +1,20 @@
+{
+  "name": "diet-chatbot",
+  "version": "1.0.0",
+  "description": "Diet and Training Chatbot with RAG",
+  "scripts": {
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "docker:logs": "docker-compose logs -f",
+    "docker:clean": "docker-compose down -v",
+    "db:migrate": "docker exec diet_backend alembic upgrade head",
+    "db:seed": "docker exec diet_backend python scripts/seed-data.py",
+    "test:api": "newman run tests/postman/collection.json",
+    "backup": "./scripts/backup.sh",
+    "monitor": "docker-compose -f docker-compose.yml -f docker-compose.monitoring.yml up"
+  },
+  "devDependencies": {
+    "newman": "^6.0.0"
+  }
+}

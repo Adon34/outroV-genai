@@ -1,0 +1,32 @@
+{
+  "training_principles": [
+    {
+      "content": "Princípios do treinamento: especificidade, sobrecarga progressiva, adaptação, individualidade biológica. Respeitar esses princípios otimiza resultados.",
+      "subcategory": "principles",
+      "source": "exercise_science",
+      "tags": ["training", "principles"]
+    }
+  ],
+  "strength_training": [
+    {
+      "content": "Treino de força para iniciantes: 2-3x/semana, full body, 8-12 repetições, 2-3 séries por exercício, descanso de 48h entre treinos do mesmo grupo muscular.",
+      "subcategory": "strength",
+      "source": "strength_training",
+      "tags": ["strength", "beginner", "full_body"]
+    },
+    {
+      "content": "Exercícios compostos fundamentais: agachamento, levantamento terra, supino, desenvolvimento, barra fixa. Trabalham múltiplos grupos musculares simultaneamente.",
+      "subcategory": "strength",
+      "source": "strength_training",
+      "tags": ["compound_exercises", "fundamentals"]
+    }
+  ],
+  "cardio": [
+    {
+      "content": "Cardio para saúde cardiovascular: 150 minutos moderado ou 75 minutos vigoroso por semana. HIIT pode ser mais eficiente em menos tempo.",
+      "subcategory": "cardio",
+      "source": "exercise_guidelines",
+      "tags": ["cardio", "health", "hiit"]
+    }
+  ]
+}
