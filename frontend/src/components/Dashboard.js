@@ -1,6 +1,7 @@
 // frontend/src/components/Dashboard.js
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
+import HealthMatrix from './HealthMatrix';
 
 const Dashboard = ({ user, token }) => {
   const [progress, setProgress] = useState(null);
@@ -124,6 +125,12 @@ const Dashboard = ({ user, token }) => {
           onClick={() => setActiveTab('progress')}
         >
           Progresso
+        </button>
+        <button 
+          className={activeTab === 'health' ? 'active' : ''}
+          onClick={() => setActiveTab('health')}
+        >
+          Saúde Sistema
         </button>
       </div>
 
@@ -270,6 +277,12 @@ const Dashboard = ({ user, token }) => {
             ) : (
               <p className="empty-state">Nenhum progresso registrado ainda</p>
             )}
+          </div>
+        )}
+
+        {activeTab === 'health' && (
+          <div className="health-tab">
+            <HealthMatrix />
           </div>
         )}
       </div>

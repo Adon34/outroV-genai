@@ -1,5 +1,5 @@
 # backend/app/main.py
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Response
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
@@ -7,7 +7,11 @@ import logging
 from app.config import settings
 from app.database import init_db
 from app.routers import auth, users, chat, meals, workouts
+from app.health.router import router as health_router
 from app.services.rag_service import RAGService
+
+# Prometheus metrics
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
 # Configuração de logging
 logging.basicConfig(level=logging.INFO)
@@ -53,63 +57,13 @@ app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(chat.router, prefix="/chat", tags=["chat"])
 app.include_router(meals.router, prefix="/meals", tags=["meals"])
 app.include_router(workouts.router, prefix="/workouts", tags=["workouts"])
+app.include_router(health_router, tags=["health"])
 
 @app.get("/")
 async def root():
     return {"message": "Diet & Training Chatbot API"}
 
-from app.database import AsyncSessionLocal
-import httpx
-import redis.asyncio as redis
-import asyncio
-
-async def check_database() -> bool:
-    """Check database connectivity"""
-    try:
-        async with AsyncSessionLocal() as session:
-            await session.execute("SELECT 1")
-        return True
-    except Exception:
-        return False
-
-async def check_redis() -> bool:
-    """Check Redis connectivity"""
-    try:
-        r = redis.Redis(
-            host=settings.REDIS_HOST,
-            port=settings.REDIS_PORT,
-            password=settings.REDIS_PASSWORD,
-            decode_responses=True
-        )
-        await r.ping()
-        return True
-    except Exception:
-        return False
-
-async def check_chroma() -> bool:
-    """Check ChromaDB connectivity"""
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.CHROMA_URL}/api/v1/heartbeat")
-            return response.status_code == 200
-    except Exception:
-        return False
-
-@app.get("/health")
-async def health_check():
-    """Detailed health check"""
-    checks = {
-        "database": await check_database(),
-        "redis": await check_redis(),
-        "chroma": await check_chroma(),
-        "rag_service": rag_service is not None
-    }
-
-    all_healthy = all(checks.values())
-    status = "healthy" if all_healthy else "degraded"
-
-    return {
-        "status": status,
-        "timestamp": asyncio.get_event_loop().time(),
-        **checks
-    }
+@app.get("/metrics")
+async def metrics():
+    """Prometheus metrics endpoint"""
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)

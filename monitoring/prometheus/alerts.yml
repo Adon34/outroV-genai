@@ -54,3 +54,49 @@ groups:
         annotations:
           summary: "High error rate detected"
           description: "Error rate is above 10% for 5 minutes"
+
+      # New health matrix alerts
+      - alert: ComponentUnhealthy
+        expr: health_check_status == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Component is unhealthy"
+          description: "{{ $labels.component }} is reporting unhealthy status"
+
+      - alert: DatabaseConnectionPoolExhausted
+        expr: database_connections_utilization_percent > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Database connection pool utilization is above 90%"
+
+      - alert: RedisMemoryHigh
+        expr: redis_memory_utilization_percent > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis memory usage high"
+          description: "Redis memory utilization is above 85%"
+
+      - alert: HealthCheckSlowResponse
+        expr: histogram_quantile(0.95, rate(health_check_response_time_ms_bucket[5m])) > 5000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow health check responses"
+          description: "95th percentile health check response time > 5 seconds"
+
+      - alert: ChromaDBCollectionsMissing
+        expr: chroma_collections_count == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ChromaDB has no collections"
+          description: "ChromaDB vector database has 0 collections, may indicate data issues"
