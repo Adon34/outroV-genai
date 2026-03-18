@@ -28,6 +28,11 @@ AsyncSessionLocal = async_sessionmaker(
 # Base class for models
 Base = declarative_base()
 
+async def init_db():
+    """Initialize database by creating all tables"""
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
 async def get_db():
     """Dependency for getting database session"""
     async with AsyncSessionLocal() as session:

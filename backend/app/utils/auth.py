@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 import os
 
-from app.models.database import AsyncSessionLocal
+from app.database import AsyncSessionLocal
 from app.models.schemas import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

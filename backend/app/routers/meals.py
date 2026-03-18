@@ -5,10 +5,9 @@ from typing import List, Optional
 from datetime import datetime, date
 
 from app.database import get_db
-from app.models.user import Meal
+from app.models.schemas import Meal, User
 from app.schemas.meal import MealCreate, MealOut, MealUpdate
 from app.utils.auth import get_current_user
-from app.models.user import User
 from sqlalchemy import select, and_, func
 
 router = APIRouter()

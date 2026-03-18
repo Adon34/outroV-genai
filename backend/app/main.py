@@ -4,7 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 
-from app.models.database import init_db
+from app.config import settings
+from app.database import init_db
 from app.routers import auth, users, chat, meals, workouts
 from app.services.rag_service import RAGService
 

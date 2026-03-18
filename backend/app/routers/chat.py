@@ -5,8 +5,8 @@ from pydantic import BaseModel
 import json
 import logging
 
-from app.services.rag_service import rag_service
-from app.models.database import AsyncSessionLocal
+from app.services.rag_service import RAGService
+from app.database import AsyncSessionLocal
 from app.models.schemas import User, Conversation, Message
 from app.utils.auth import get_current_user
 from sqlalchemy import select
@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+rag_service: RAGService = None  # Will be initialized in main.py
 
 class ChatRequest(BaseModel):
     message: str
