@@ -1,6 +1,7 @@
 // frontend/src/components/ChatInterface.js
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatInterface.css';
+import API_BASE_URL from '../services/api';  // <-- importa a base URL
 
 const ChatInterface = ({ token, userId }) => {
   const [messages, setMessages] = useState([]);
@@ -31,7 +32,7 @@ const ChatInterface = ({ token, userId }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/chat/send', {
+      const response = await fetch(`${API_BASE_URL}/chat/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

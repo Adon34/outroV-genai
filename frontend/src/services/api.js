@@ -1,12 +1,12 @@
 // frontend/src/services/api.js
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
 class ApiClient {
     constructor() {
         this.client = axios.create({
-            baseURL: API_URL,
+            baseURL: API_BASE_URL,
             timeout: 30000,
             headers: {
                 'Content-Type': 'application/json',
@@ -159,3 +159,4 @@ class ApiClient {
 }
 
 export default new ApiClient();
+export { API_BASE_URL };

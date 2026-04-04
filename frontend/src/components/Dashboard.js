@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import HealthMatrix from './HealthMatrix';
+import API_BASE_URL from '../services/api';  // <-- importa a base URL
 
 const Dashboard = ({ user, token }) => {
   const [progress, setProgress] = useState(null);
@@ -19,7 +20,7 @@ const Dashboard = ({ user, token }) => {
 
   const fetchProgress = async () => {
     try {
-      const response = await fetch('http://localhost:8000/users/progress', {
+      const response = await fetch(`${API_BASE_URL}/users/progress`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -33,7 +34,7 @@ const Dashboard = ({ user, token }) => {
 
   const fetchTodayMeals = async () => {
     try {
-      const response = await fetch('http://localhost:8000/meals/today', {
+      const response = await fetch(`${API_BASE_URL}/meals/today`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -47,7 +48,7 @@ const Dashboard = ({ user, token }) => {
 
   const fetchTodayWorkouts = async () => {
     try {
-      const response = await fetch('http://localhost:8000/workouts/today', {
+      const response = await fetch(`${API_BASE_URL}/workouts/today`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

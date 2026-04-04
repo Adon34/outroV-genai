@@ -1,6 +1,7 @@
 // frontend/src/components/Login.js
 import React, { useState } from 'react';
 import './Login.css';
+import API_BASE_URL from '../services/api';  // <-- importa a base URL
 
 const Login = ({ setToken }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -30,7 +31,7 @@ const Login = ({ setToken }) => {
         formDataEncoded.append('username', formData.email);
         formDataEncoded.append('password', formData.password);
 
-        const response = await fetch('http://localhost:8000/auth/token', {
+        const response = await fetch(`${API_BASE_URL}/auth/token`, {  // <-- usando API_BASE_URL
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -47,7 +48,7 @@ const Login = ({ setToken }) => {
         }
       } else {
         // Registro
-        const response = await fetch('http://localhost:8000/auth/register', {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {  // <-- usando API_BASE_URL
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
