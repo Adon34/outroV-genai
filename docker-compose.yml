@@ -18,7 +18,7 @@ services:
     networks:
       - diet_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -36,7 +36,7 @@ services:
     networks:
       - diet_network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,23 +49,33 @@ services:
     volumes:
       - chroma_data:/chroma/chroma
     environment:
-      - IS_PERSISTENT=TRUE
-      - PERSIST_DIRECTORY=/chroma/chroma
-      - ANONYMIZED_TELEMETRY=FALSE
+    - IS_PERSISTENT=TRUE
+    - PERSIST_DIRECTORY=/chroma/chroma
+    - ANONYMIZED_TELEMETRY=FALSE
+    - CHROMA_TELEMETRY_IMPL=noop
+    - CHROMA_OTEL_COLLECTION_ENDPOINT=
+    - CHROMA_OTEL_SERVICE_NAME=
+    - CHROMA_OTEL_GRANULARITY=none
+    - CHROMA_SERVER_AUTHN_CREDENTIALS="" 
+    - CHROMA_SERVER_AUTHN_PROVIDER=
+    - CHROMA_SERVER_AUTHZ_PROVIDER=
+    - CHROMA_SERVER_AUTHN_CREDENTIALS_FILE=
+    - CHROMA_SERVER_CORS_ALLOW_ORIGINS="[\"*\"]"
     ports:
       - "8000:8000"
     networks:
       - diet_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      test: ["CMD", "/usr/local/bin/chroma", "--version"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 30s
     restart: unless-stopped
 
   # Backend API
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: diet_backend
@@ -89,7 +99,7 @@ services:
       sh -c "alembic upgrade head &&
              uvicorn app.main:app --host 0.0.0.0 --port 8000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health/live" ]
       interval: 30s
       timeout: 10s
       retries: 3

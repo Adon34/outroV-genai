@@ -86,12 +86,12 @@ async def check_chroma() -> ComponentHealth:
     start_time = time.time()
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{settings.CHROMA_URL}/api/v1/heartbeat")
+            response = await client.get(f"{settings.CHROMA_URL}/api/v2/heartbeat")
             response.raise_for_status()
             response_time = (time.time() - start_time) * 1000
 
             # Try to get collection info
-            collections_response = await client.get(f"{settings.CHROMA_URL}/api/v1/collections")
+            collections_response = await client.get(f"{settings.CHROMA_URL}/api/v2/collections")
             collections = collections_response.json() if collections_response.status_code == 200 else []
 
             return ComponentHealth(

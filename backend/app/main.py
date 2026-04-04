@@ -61,7 +61,16 @@ app.include_router(health_router, tags=["health"])
 
 @app.get("/")
 async def root():
-    return {"message": "Diet & Training Chatbot API"}
+    return {
+        "message": "Diet & Training AI Platform",
+        "version": "1.0.0",
+        "status": "online",
+        "endpoints": {
+            "health": "/health",
+            "status": "/api/v1/status",
+            "chat": "/api/v1/chat"
+        }
+    }
 
 @app.get("/metrics")
 async def metrics():
