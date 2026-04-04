@@ -7,8 +7,11 @@ import asyncio
 from typing import List, Dict, Any, Optional
 import chromadb
 from chromadb.config import Settings
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_chroma import Chroma
+# from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.chat_models import ChatOpenAI
+# from langchain_chroma import Chroma
+from langchain.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.memory import ConversationBufferMemory
 from langchain.prompts import PromptTemplate

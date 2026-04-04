@@ -1,40 +1,47 @@
-# Stage 1: Build the application
-FROM node:18-alpine as builder
+# Estágio 1: Build
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copiar arquivos de dependências
 COPY package*.json ./
 
-# Install dependencies
-# RUN npm ci --only=production
+# Instalar dependências (inclui devDependencies como react-scripts)
+# Usa --legacy-peer-deps para resolver conflitos
+RUN npm install --legacy-peer-deps --no-audit --no-fund
 
-RUN npm install --production=false && \
-    npm cache clean --force
+# Instalar explicitamente o módulo problemático (ajv)
+RUN npm install ajv@8.12.0 --save-dev
 
-# Copy source code
+# Copiar o código fonte
 COPY . .
 
-# Build the application
+# Construir a aplicação
 RUN npm run build
 
-# Stage 2: Serve the application
+# Verificar se o build gerou a pasta (debug)
+RUN if [ ! -d /app/build ] || [ -z "$(ls -A /app/build)" ]; then echo "Build failed - no output" && exit 1; fi
+
+# Estágio 2: Servir arquivos estáticos
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install serve globally
-RUN npm install -g serve
+# Instalar curl (para healthcheck) e serve
+RUN apk add --no-cache curl && npm install -g serve
 
-# Copy built application from builder stage
+# Copiar os arquivos buildados do estágio anterior
 COPY --from=builder /app/build ./build
 
-# Expose port
+# Verificar se a cópia funcionou
+RUN if [ ! -d ./build ] || [ -z "$(ls -A ./build)" ]; then echo "No build files copied" && exit 1; fi
+
+# Expor porta
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+# Healthcheck (aguarda 10 segundos antes de começar)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
   CMD curl -f http://localhost:3000 || exit 1
 
-# Serve the application
+# Servir a aplicação
 CMD ["serve", "-s", "build", "-l", "3000"]
