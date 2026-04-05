@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import ChatInterface from './components/ChatInterface';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import apiClient from './services/api';
 import './App.css';
 
 function App() {
@@ -17,13 +18,8 @@ function App() {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('http://localhost:8000/users/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      setUser(data);
+      const response = await apiClient.get('/users/me');
+      setUser(response.data);
     } catch (error) {
       console.error('Error fetching user:', error);
       logout();

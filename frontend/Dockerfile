@@ -1,6 +1,16 @@
 # Estágio 1: Build
 FROM node:18-alpine AS builder
 
+
+# Recebe argumentos
+ARG REACT_APP_API_URL
+ARG REACT_APP_WS_URL
+
+
+# Define como variáveis de ambiente para o build
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+ENV REACT_APP_WS_URL=$REACT_APP_WS_URL
+
 WORKDIR /app
 
 # Copiar arquivos de dependências

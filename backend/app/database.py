@@ -1,8 +1,8 @@
-# backend/app/database.py
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 from app.config import settings
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -32,17 +32,12 @@ async def init_db():
     """Initialize database by creating all tables"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database initialized successfully")
 
-async def get_db():
+async def get_db(local_kw: str = None):
     """Dependency for getting database session"""
     async with AsyncSessionLocal() as session:
         try:
             yield session
         finally:
             await session.close()
-
-async def init_db():
-    """Initialize database (create tables)"""
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    logger.info("Database initialized successfully")

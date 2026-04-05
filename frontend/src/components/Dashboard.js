@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import HealthMatrix from './HealthMatrix';
-import API_BASE_URL from '../services/api';  // <-- importa a base URL
+import apiClient from '../services/api';  // <-- importa o cliente
 
 const Dashboard = ({ user, token }) => {
   const [progress, setProgress] = useState(null);
@@ -20,12 +20,7 @@ const Dashboard = ({ user, token }) => {
 
   const fetchProgress = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/progress`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
+      const data = await apiClient.get('/users/progress');
       setProgress(data);
     } catch (error) {
       console.error('Error fetching progress:', error);
@@ -34,12 +29,7 @@ const Dashboard = ({ user, token }) => {
 
   const fetchTodayMeals = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/meals/today`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
+      const data = await apiClient.get('/meals/today');
       setMeals(data);
     } catch (error) {
       console.error('Error fetching meals:', error);
@@ -48,12 +38,7 @@ const Dashboard = ({ user, token }) => {
 
   const fetchTodayWorkouts = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/workouts/today`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
+      const data = await apiClient.get('/workouts/today');
       setWorkouts(data);
     } catch (error) {
       console.error('Error fetching workouts:', error);

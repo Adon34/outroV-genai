@@ -1,12 +1,12 @@
 // frontend/src/services/api.js
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
+const API_URL = '/api';
 
 class ApiClient {
     constructor() {
         this.client = axios.create({
-            baseURL: API_BASE_URL,
+            baseURL: API_URL,
             timeout: 30000,
             headers: {
                 'Content-Type': 'application/json',
@@ -22,9 +22,7 @@ class ApiClient {
                 }
                 return config;
             },
-            (error) => {
-                return Promise.reject(error);
-            }
+            (error) => Promise.reject(error)
         );
 
         // Response interceptor
@@ -32,49 +30,76 @@ class ApiClient {
             (response) => response,
             async (error) => {
                 const originalRequest = error.config;
-
-                // Handle token refresh
+                
+                // Evita loop infinito
                 if (error.response?.status === 401 && !originalRequest._retry) {
                     originalRequest._retry = true;
                     
+                    if (originalRequest.url?.includes('/auth/refresh')) {
+                        localStorage.clear();
+                        window.location.href = '/login';
+                        return Promise.reject(error);
+                    }
+                    
                     try {
                         const refreshToken = localStorage.getItem('refreshToken');
+                        if (!refreshToken) {
+                            window.location.href = '/login';
+                            return Promise.reject(error);
+                        }
+                        
                         const response = await this.client.post('/auth/refresh', {
                             refresh_token: refreshToken
                         });
                         
                         localStorage.setItem('token', response.data.access_token);
                         originalRequest.headers.Authorization = `Bearer ${response.data.access_token}`;
-                        
                         return this.client(originalRequest);
                     } catch (refreshError) {
-                        // Redirect to login
                         localStorage.clear();
                         window.location.href = '/login';
                         return Promise.reject(refreshError);
                     }
                 }
-
+                
                 return Promise.reject(error);
             }
         );
     }
 
+    // MÉTODO GET - Adicione se não existir
+    async get(url, config = {}) {
+        const response = await this.client.get(url, config);
+        return response.data;
+    }
+
+    // MÉTODO POST
+    async post(url, data, config = {}) {
+        const response = await this.client.post(url, data, config);
+        return response.data;
+    }
+
+    // MÉTODO PUT
+    async put(url, data, config = {}) {
+        const response = await this.client.put(url, data, config);
+        return response.data;
+    }
+
+    // MÉTODO DELETE
+    async delete(url, config = {}) {
+        const response = await this.client.delete(url, config);
+        return response.data;
+    }
+
     // Auth endpoints
     async login(email, password) {
-        const formData = new URLSearchParams();
-        formData.append('username', email);
-        formData.append('password', password);
-
-        const response = await this.client.post('/auth/token', formData, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
+        const response = await this.client.post('/auth/login', {
+            email: email,
+            password: password
         });
         
         if (response.data.access_token) {
             localStorage.setItem('token', response.data.access_token);
-            localStorage.setItem('refreshToken', response.data.refresh_token);
         }
         
         return response.data;
@@ -94,42 +119,11 @@ class ApiClient {
     }
 
     async getCurrentUser() {
-        const response = await this.client.get('/auth/me');
+        const response = await this.client.get('/users/me');
         return response.data;
     }
 
-    // Chat endpoints
-    async sendMessage(message, conversationId = null) {
-        const response = await this.client.post('/chat/send', {
-            message,
-            conversation_id: conversationId
-        });
-        return response.data;
-    }
-
-    async getConversations(page = 1, limit = 20) {
-        const response = await this.client.get('/chat/conversations', {
-            params: { skip: (page - 1) * limit, limit }
-        });
-        return response.data;
-    }
-
-    async getConversation(conversationId) {
-        const response = await this.client.get(`/chat/conversations/${conversationId}`);
-        return response.data;
-    }
-
-    async deleteConversation(conversationId) {
-        const response = await this.client.delete(`/chat/conversations/${conversationId}`);
-        return response.data;
-    }
-
-    // User endpoints
-    async updateProfile(userData) {
-        const response = await this.client.put('/users/profile', userData);
-        return response.data;
-    }
-
+    // Progress endpoints
     async getProgress() {
         const response = await this.client.get('/users/progress');
         return response.data;
@@ -156,7 +150,22 @@ class ApiClient {
         const response = await this.client.post('/workouts', workoutData);
         return response.data;
     }
+
+    // Chat endpoints
+    async sendMessage(message, conversationId = null) {
+        const response = await this.client.post('/chat/send', {
+            message,
+            conversation_id: conversationId
+        });
+        return response.data;
+    }
+
+    async getConversations(page = 1, limit = 20) {
+        const response = await this.client.get('/chat/conversations', {
+            params: { skip: (page - 1) * limit, limit }
+        });
+        return response.data;
+    }
 }
 
 export default new ApiClient();
-export { API_BASE_URL };

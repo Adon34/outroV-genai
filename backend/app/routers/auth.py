@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, EmailStr
+from fastapi import APIRouter, Depends, HTTPException, status, Query
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 from typing import Optional
-import os
 
-from app.database import AsyncSessionLocal
+from app.database import get_db  # <-- Importe get_db
 from app.models.schemas import User
 from app.utils.auth import (
     verify_password,
@@ -14,7 +13,7 @@ from app.utils.auth import (
     create_access_token,
     get_current_user,
 )
-from app.schemas.user import UserCreate, UserInDB
+from app.schemas.user import UserCreate, UserInDB, UserRegisterResponse
 
 router = APIRouter()
 
@@ -27,8 +26,11 @@ class TokenResponse(BaseModel):
     token_type: str
     user: Optional[dict] = None
 
-@router.post("/register", response_model=UserInDB)
-async def register(user_data: UserCreate, db: AsyncSession = Depends(AsyncSessionLocal)):
+@router.post("/register", response_model=UserRegisterResponse)
+async def register(
+    user_data: UserCreate, 
+    db: AsyncSession = Depends(get_db)
+):
     """Create a new user account"""
     # Check if user exists
     stmt = select(User).where(User.email == user_data.email)
@@ -53,12 +55,21 @@ async def register(user_data: UserCreate, db: AsyncSession = Depends(AsyncSessio
     await db.commit()
     await db.refresh(db_user)
     
-    return db_user
+    return UserRegisterResponse(
+        id=db_user.id,
+        email=db_user.email,
+        username=db_user.username,
+        full_name=db_user.full_name,
+        is_active=db_user.is_active,
+        created_at=db_user.created_at
+    )
 
 @router.post("/login", response_model=TokenResponse)
-async def login(credentials: LoginRequest, db: AsyncSession = Depends(AsyncSessionLocal)):
+async def login(
+    credentials: LoginRequest, 
+    db: AsyncSession = Depends(get_db)
+):
     """Authenticate user and return JWT token"""
-    # Find user by email
     stmt = select(User).where(User.email == credentials.email)
     result = await db.execute(stmt)
     user = result.scalars().first()
@@ -69,7 +80,6 @@ async def login(credentials: LoginRequest, db: AsyncSession = Depends(AsyncSessi
             detail="Invalid email or password"
         )
     
-    # Create access token
     access_token = create_access_token(
         data={"sub": str(user.id)},
         expires_delta=timedelta(minutes=30)
@@ -86,8 +96,9 @@ async def login(credentials: LoginRequest, db: AsyncSession = Depends(AsyncSessi
     }
 
 @router.post("/refresh")
-async def refresh_token(current_user: User = Depends(get_current_user)):
+async def refresh_token(refresh_token: str = None, current_user: User = Depends(get_current_user)):
     """Refresh JWT token"""
+    # Se não houver refresh_token, apenas gere um novo token
     access_token = create_access_token(
         data={"sub": str(current_user.id)},
         expires_delta=timedelta(minutes=30)

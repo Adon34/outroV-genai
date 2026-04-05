@@ -53,6 +53,18 @@ class UserCreate(UserBase):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    
+class UserRegisterResponse(BaseModel):
+    id: int
+    email: EmailStr
+    username: str
+    full_name: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
 
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None

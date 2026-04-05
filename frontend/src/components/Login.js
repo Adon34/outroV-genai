@@ -1,7 +1,7 @@
 // frontend/src/components/Login.js
 import React, { useState } from 'react';
 import './Login.css';
-import API_BASE_URL from '../services/api';  // <-- importa a base URL
+import apiClient from '../services/api';   // <-- importa o cliente
 
 const Login = ({ setToken }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -26,46 +26,19 @@ const Login = ({ setToken }) => {
 
     try {
       if (isLogin) {
-        // Login
-        const formDataEncoded = new URLSearchParams();
-        formDataEncoded.append('username', formData.email);
-        formDataEncoded.append('password', formData.password);
-
-        const response = await fetch(`${API_BASE_URL}/auth/token`, {  // <-- usando API_BASE_URL
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: formDataEncoded
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          localStorage.setItem('token', data.access_token);
-          setToken(data.access_token);
-        } else {
-          setError(data.detail || 'Erro no login');
-        }
+        // Login usando o apiClient
+        const data = await apiClient.login(formData.email, formData.password);
+        setToken(data.access_token);
       } else {
-        // Registro
-        const response = await fetch(`${API_BASE_URL}/auth/register`, {  // <-- usando API_BASE_URL
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData)
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          setIsLogin(true);
-          setError('Registro realizado com sucesso! Faça login.');
-        } else {
-          setError(data.detail || 'Erro no registro');
-        }
+        // Registro usando o apiClient
+        await apiClient.register(formData);
+        setIsLogin(true);
+        setError('Registro realizado com sucesso! Faça login.');
       }
     } catch (error) {
-      setError('Erro de conexão com o servidor');
+      console.error('Erro:', error);
+      const mensagem = error.response?.data?.detail || 'Erro de conexão com o servidor';
+      setError(mensagem);
     }
   };
 

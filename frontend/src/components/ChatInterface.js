@@ -1,7 +1,7 @@
 // frontend/src/components/ChatInterface.js
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatInterface.css';
-import API_BASE_URL from '../services/api';  // <-- importa a base URL
+import apiClient from '../services/api';  // <-- importa o cliente
 
 const ChatInterface = ({ token, userId }) => {
   const [messages, setMessages] = useState([]);
@@ -32,19 +32,8 @@ const ChatInterface = ({ token, userId }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/chat/send`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          message: inputMessage,
-          conversation_id: conversationId
-        })
-      });
-
-      const data = await response.json();
+      // Usando o apiClient que já tem o token via interceptor
+      const data = await apiClient.sendMessage(inputMessage, conversationId);
 
       const assistantMessage = {
         role: 'assistant',
