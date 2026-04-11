@@ -403,38 +403,25 @@ class ApiClient {
 
     async getConversations(skip = 0, limit = 20) {
         try {
-            const response = await this.client.get('/chat/conversations', {
-                params: { skip, limit }
-            });
-            return response.data;
+            // Remover os parâmetros da URL
+            const response = await this.client.get('/chat/conversations');
+            // Garantir que retorna array
+            return { conversations: response.data || [] };
         } catch (error) {
             console.error('Error fetching conversations:', error);
-            // Retornar estrutura vazia em caso de erro
-            return {
-                conversations: [],
-                total: 0,
-                skip: skip,
-                limit: limit
-            };
+            return { conversations: [] };
         }
     }
 
-    async getConversationMessages(conversationId, skip = 0, limit = 50) {
+    async getRecentActions(limit = 10) {
         try {
-            const response = await this.client.get(`/chat/conversations/${conversationId}/messages`, {
-                params: { skip, limit }
-            });
-            return response.data;
+            // Remover os parâmetros da URL
+            const response = await this.client.get('/chat/actions/recent');
+            // Garantir que retorna array
+            return { actions: response.data || [] };
         } catch (error) {
-            console.error('Error fetching conversation messages:', error);
-            return {
-                conversation_id: conversationId,
-                conversation_title: null,
-                messages: [],
-                total: 0,
-                skip: skip,
-                limit: limit
-            };
+            console.error('Error fetching recent actions:', error);
+            return { actions: [] };
         }
     }
 
@@ -446,10 +433,16 @@ class ApiClient {
 
     // Ações recentes do agente
     async getRecentActions(limit = 10) {
-        const response = await this.client.get('/chat/actions/recent', {
-            params: { limit }
-        });
-        return response.data;
+        try {
+            // Usar params corretamente
+            const response = await this.client.get('/chat/actions/recent', {
+                params: { limit: parseInt(limit) }  // ← garantir que é número
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching recent actions:', error);
+            return { actions: [] };
+        }
     }
 
     async extractProfileFromMessage(message) {

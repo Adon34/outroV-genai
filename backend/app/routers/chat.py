@@ -648,30 +648,22 @@ async def websocket_stream_endpoint(
 @router.get("/actions/recent")
 async def get_recent_actions(
     current_user: User = Depends(get_current_user),
-    limit: int = 10,
     db: AsyncSession = Depends(AsyncSessionLocal)
 ):
-    """Get recent actions performed by agents for the user"""
+    """Obtém ações recentes executadas pelos agentes para o usuário"""
+    from sqlalchemy import and_, desc
+    
     try:
-        # Buscar conversas do usuário
-        conv_stmt = select(Conversation.id).where(
-            Conversation.user_id == current_user.id
-        )
-        conv_result = await db.execute(conv_stmt)
-        conversation_ids = [row[0] for row in conv_result.fetchall()]
+        logger.info(f"GET /chat/actions/recent - user_id: {current_user.id}")
         
-        if not conversation_ids:
-            return {"actions": [], "total": 0, "user_id": current_user.id}
-        
-        # Buscar mensagens do assistente com metadados de ação
-        from sqlalchemy import and_
-        stmt = select(Message).where(
-            and_(
-                Message.conversation_id.in_(conversation_ids),
-                Message.role == "assistant",
-                Message.message_metadata.isnot(None)
-            )
-        ).order_by(desc(Message.created_at)).limit(limit)
+        # Buscar mensagens do assistente com ações
+        stmt = select(Message).join(
+            Conversation, Message.conversation_id == Conversation.id
+        ).where(
+            Conversation.user_id == current_user.id,
+            Message.role == "assistant",
+            Message.message_metadata.isnot(None)
+        ).order_by(desc(Message.created_at)).limit(10)
         
         result = await db.execute(stmt)
         messages = result.scalars().all()
@@ -688,16 +680,12 @@ async def get_recent_actions(
                     "conversation_id": msg.conversation_id
                 })
         
-        return {
-            "actions": actions,
-            "total": len(actions),
-            "user_id": current_user.id
-        }
+        return actions  # ← Retorna array direto
         
     except Exception as e:
         logger.error(f"Erro ao buscar ações: {e}", exc_info=True)
-        return {"actions": [], "total": 0, "user_id": current_user.id, "error": str(e)}
-
+        return []
+    
 
 @router.post("/extract-profile")
 async def extract_profile_from_message(
@@ -831,8 +819,6 @@ async def chat_health(
 
 @router.get("/conversations")
 async def get_conversations_list(
-    skip: int = 0,
-    limit: int = 20,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(AsyncSessionLocal)
 ):
@@ -842,9 +828,10 @@ async def get_conversations_list(
     try:
         logger.info(f"GET /chat/conversations - user_id: {current_user.id}")
         
+        # Buscar conversas - sem paginação
         stmt = select(Conversation).where(
             Conversation.user_id == current_user.id
-        ).order_by(desc(Conversation.created_at)).offset(skip).limit(limit)
+        ).order_by(desc(Conversation.created_at))
         
         result = await db.execute(stmt)
         conversations = result.scalars().all()
@@ -866,16 +853,11 @@ async def get_conversations_list(
                 "messages_count": messages_count
             })
         
-        return {
-            "conversations": conversations_data,
-            "total": len(conversations_data),
-            "skip": skip,
-            "limit": limit
-        }
+        return conversations_data  # ← Retorna array direto
         
     except Exception as e:
         logger.error(f"Erro ao listar conversas: {e}", exc_info=True)
-        return {"conversations": [], "total": 0}
+        return []
 
 
 @router.get("/conversations/{conversation_id}/messages")

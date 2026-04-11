@@ -153,9 +153,10 @@ const ChatInterface = ({ conversationId: externalConversationId, onWorkoutCreate
     const loadConversations = async () => {
         setIsLoadingHistory(true);
         try {
-            const data = await api.getConversations(0, 20);
-            // Garantir que data.conversations existe
-            setConversations(data.conversations || []);
+            const data = await api.getConversations();
+            // O data agora tem { conversations: [] }
+            const conversationsList = data.conversations || data || [];
+            setConversations(conversationsList);
         } catch (error) {
             console.error('Error loading conversations:', error);
             setConversations([]);
