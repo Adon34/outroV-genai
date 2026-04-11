@@ -10,7 +10,7 @@ from sqlalchemy import select
 import os
 
 from app.database import AsyncSessionLocal
-from app.models.schemas import User
+from app.models import User
 
 pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")

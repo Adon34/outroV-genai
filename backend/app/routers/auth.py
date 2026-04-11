@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from app.database import get_db  # <-- Importe get_db
-from app.models.schemas import User
+from app.models import User # schema 
 from app.utils.auth import (
     verify_password,
     get_password_hash,
@@ -50,6 +50,14 @@ async def register(
         username=user_data.username,
         hashed_password=hashed_password,
         full_name=user_data.full_name or "",
+        is_active=True,
+        is_verified=False,
+        created_at=datetime.utcnow(),
+        # Inicializa campos JSON vazios
+        fitness_goals=[],
+        health_conditions=[],
+        allergies=[],
+        preferences={}
     )
     db.add(db_user)
     await db.commit()

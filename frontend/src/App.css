@@ -1,4 +1,27 @@
 /* frontend/src/App.css */
+:root {
+  --green-primary: #059669;
+  --green-primary-dark: #047857;
+  --green-primary-light: #10b981;
+  --green-secondary: #34d399;
+  --green-light: #d1fae5;
+  --green-bg: #ecfdf5;
+  --green-accent: #6ee7b7;
+  --green-dark: #064e3b;
+  
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11,60 +34,298 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
+  background: var(--green-bg);
 }
 
-.App {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.navbar {
-  background: white;
-  padding: 15px 30px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
-.navbar h1 {
-  color: #667eea;
-  font-size: 1.5rem;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.user-info button {
-  padding: 8px 16px;
-  background: #667eea;
-  color: white;
-  border: none;
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
   border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s;
 }
 
-.user-info button:hover {
-  background: #5a67d8;
+::-webkit-scrollbar-thumb {
+  background: var(--green-secondary);
+  border-radius: 4px;
 }
 
-.main-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--green-primary);
 }
 
-@media (min-width: 768px) {
-  .main-container {
-    grid-template-columns: 1fr 1fr;
+/* Classes utilitárias */
+.text-green {
+  color: var(--green-primary);
+}
+
+.text-red {
+  color: #ef4444;
+}
+
+.bg-green {
+  background: var(--green-primary);
+}
+
+.bg-green-light {
+  background: var(--green-light);
+}
+
+/* Notificações */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+}
+
+.notification-success {
+  background: var(--green-primary);
+}
+
+.notification-error {
+  background: #ef4444;
+}
+
+.notification-info {
+  background: #3b82f6;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--green-bg);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--green-light);
+  border-top-color: var(--green-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--green-light);
+  border-top-color: var(--green-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .notification {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    text-align: center;
+  }
+}/* frontend/src/App.css */
+:root {
+  --green-primary: #059669;
+  --green-primary-dark: #047857;
+  --green-primary-light: #10b981;
+  --green-secondary: #34d399;
+  --green-light: #d1fae5;
+  --green-bg: #ecfdf5;
+  --green-accent: #6ee7b7;
+  --green-dark: #064e3b;
+  
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--green-bg);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--green-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--green-primary);
+}
+
+/* Classes utilitárias */
+.text-green {
+  color: var(--green-primary);
+}
+
+.text-red {
+  color: #ef4444;
+}
+
+.bg-green {
+  background: var(--green-primary);
+}
+
+.bg-green-light {
+  background: var(--green-light);
+}
+
+/* Notificações */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+}
+
+.notification-success {
+  background: var(--green-primary);
+}
+
+.notification-error {
+  background: #ef4444;
+}
+
+.notification-info {
+  background: #3b82f6;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--green-bg);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--green-light);
+  border-top-color: var(--green-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--green-light);
+  border-top-color: var(--green-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .notification {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    text-align: center;
   }
 }

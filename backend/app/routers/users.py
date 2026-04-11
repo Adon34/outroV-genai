@@ -1,11 +1,11 @@
 # backend/app/routers/users.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from typing import List, Optional
 from app.database import get_db
 from app.schemas.user import UserUpdate, UserInDB
 from app.utils.auth import get_current_user
-from app.models.schemas import User
+from app.models import User
 
 router = APIRouter()
 
@@ -23,6 +23,7 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
         "gender": current_user.gender,
         "activity_level": current_user.activity_level,
         "is_active": current_user.is_active,
+        "is_verified": getattr(current_user, 'is_verified', True),  # Valor padrão
         "created_at": current_user.created_at.isoformat() if current_user.created_at else None
     }
 
@@ -44,8 +45,7 @@ async def update_profile(
 
 @router.get("/progress")
 async def get_user_progress(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    current_user: User = Depends(get_current_user)
 ):
     """Get user progress data"""
     try:
@@ -69,7 +69,7 @@ async def get_user_progress(
             "bmi": None,
             "body_fat": None,
             "daily_calories": None,
-            "muscle_mass": None
+            "muscle_mass": None,
             "goals": []
         }
         

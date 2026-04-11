@@ -13,9 +13,9 @@ class Exercise(BaseModel):
 
 class WorkoutBase(BaseModel):
     name: str
-    description: Optional[str] = None
-    duration: Optional[int] = None  # in minutes
-    calories_burned: Optional[float] = None
+    description: Optional[str] = None  # ← existe na tabela
+    duration: Optional[int] = None  # ← em minutos, existe na tabela
+    calories_burned: Optional[float] = None  # ← existe na tabela
     exercises: Optional[List[Exercise]] = []
     date: Optional[datetime] = None
 

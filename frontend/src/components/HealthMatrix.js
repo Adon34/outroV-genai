@@ -1,6 +1,7 @@
 // frontend/src/components/HealthMatrix.js
 import React, { useState, useEffect } from 'react';
 import './HealthMatrix.css';
+import apiClient from '../services/api';
 
 const HealthMatrix = () => {
     const [healthData, setHealthData] = useState(null);
@@ -17,11 +18,8 @@ const HealthMatrix = () => {
     const fetchHealthData = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:8001/health');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
+
+            const data = await apiClient.get('/health/live');
             setHealthData(data);
             setError(null);
         } catch (err) {

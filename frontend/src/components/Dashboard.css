@@ -28,11 +28,16 @@
 .dashboard-tabs button:hover {
   background: #e9ecef;
 }
-
+/*
 .dashboard-tabs button.active {
   color: #667eea;
   border-bottom: 2px solid #667eea;
   background: white;
+}
+  */
+.dashboard-tabs button.active {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
 }
 
 .dashboard-content {
@@ -50,7 +55,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   text-align: center;
 }
 
@@ -95,11 +100,11 @@
 }
 
 .goal-tag {
-  background: #667eea;
+  background: #10B981;
   color: white;
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .condition-tag {
